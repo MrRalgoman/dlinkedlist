@@ -20,15 +20,16 @@ public:
     void setTailPtr(Node<T> *node);
     Node<T> *getHeadPtr();
     Node<T> *getTailPtr();
-    unsigned int &len() const;
+    unsigned int &len();
 
     void insertFront(T &data);
-    void insertIntOrder(T &data);
+    void insertInOrder(T &data);
     void insertBack(T &data);
     T &popFront();
     T &popBack();
     bool isEmpty();
     void print();
+
 private:
     Node<T> *head;
     Node<T> *tail;
@@ -48,21 +49,19 @@ DLinkedList<T>::DLinkedList()
 template <class T>
 DLinkedList<T>::DLinkedList(DLinkedList<T> &copyList)
 {
-    if (!copyList->isEmpty()) {
-        Node<T> *cpyTemp = copyList.getHeadPtr();
-        this->head = new Node<T>(cpyTemp);
-        Node<T> *cpy = this->head;
+    if (!copyList.isEmpty()) {
+        Node<T> *cpyItr = copyList.getHeadPtr();
+        this->head = new Node<T>(cpyItr);
+        Node<T> *itr = this->head;
 
-        while (cpyTemp) {
-            cpy->setNextPtr(new Node<T>(cpyTemp->getNextPtr()));
+        while (cpyItr->getNextPtr()) {
+            itr->setNextPtr(new Node<T>(cpyItr->getNextPtr()));
 
-            cpy = cpy->getNextPtr();
-            cpyTemp = cpyTemp->getNextPtr();
+            itr = itr->getNextPtr();
+            cpyItr = cpyItr->getNextPtr();
+
+            this->tail = itr;
         }
-
-        this->tail = cpy;
-    } else {
-
     }
 }
 
@@ -70,7 +69,17 @@ DLinkedList<T>::DLinkedList(DLinkedList<T> &copyList)
 template <class T>
 DLinkedList<T>::~DLinkedList()
 {
+    if (!this->isEmpty()) {
+        Node<T> *itr = this->head;
 
+        while(itr) {
+            Node<T> *temp = itr;
+
+            itr = itr->getNextPtr();
+
+            delete temp;
+        }
+    }
 }
 
 // Sets DLinkedList head ptr
@@ -103,7 +112,7 @@ Node<T> *DLinkedList<T>::getTailPtr()
 
 // Gets length of the DLinkedList
 template <class T>
-unsigned int &DLinkedList<T>::len() const
+unsigned int &DLinkedList<T>::len()
 {
     return this->size;
 }
@@ -170,6 +179,21 @@ template <class T>
 bool DLinkedList<T>::isEmpty()
 {
     return (this->size == 0);
+}
+
+// Prints DLinkedList Nodes
+template <class T>
+void DLinkedList<T>::print()
+{
+    if (!this->isEmpty()) {
+        Node<T> *itr = this->head;
+
+        while (itr) {
+            cout << itr << '\n';
+
+            itr = itr->getNextPtr();
+        }
+    }
 }
 
 #endif
